@@ -1,6 +1,6 @@
 <template>
     <div class="homeBox">
-        测试
+        首页导航栏
     </div>
 </template>
 
