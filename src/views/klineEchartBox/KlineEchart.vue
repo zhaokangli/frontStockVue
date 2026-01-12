@@ -30,18 +30,40 @@
 
 <script setup>
 import { onMounted } from 'vue'
+onMounted(async () => {
+  // 先加载 ECharts
+  await loadECharts()
+  // 再加载您的 chart.js
+  loadChartScript()
+})
 
-onMounted(() => {
-  // 页面加载完成后直接加载 chart.js
+const loadECharts = () => {
+  return new Promise((resolve, reject) => {
+    if (window.echarts) {
+      resolve()
+      return
+    }
+    
+    const script = document.createElement('script')
+    script.src = '/src/utils/depend/echarts.min.js'
+    script.onload = () => resolve()
+    script.onerror = reject
+    document.head.appendChild(script)
+  })
+}
+
+const loadChartScript = () => {
   const script = document.createElement('script')
-  script.src = '/src/utils/depend/echarts.min.js'
+  script.src = '/src/views/klineEchartBox/klineEchart/chart.js'
   script.type = 'module'
   document.head.appendChild(script)
-  const script2 = document.createElement('script')
-  script2.src = '/src/views/klineEchartBox/klineEchart/chart.js'
-  script2.type = 'module'
-  document.head.appendChild(script2)
-})
+}
+// onMounted(() => {
+//   const script = document.createElement('script')
+//   script.src = '/src/views/klineEchartBox/klineEchart/chart.js'
+//   script.type = 'module'
+//   document.head.appendChild(script)
+// })
 </script>
 
 <style scoped>
