@@ -1,0 +1,26 @@
+:root.dark {
+  /* 保留原有暗黑底色和文字色，仅替换高亮色（浅蓝色系） */
+  --el-color-black: #0e0e10;
+  --el-color-white: #f5f5f7;
+  --el-bg-color: #121217;
+  --el-bg-color-page: #18181f;
+  --el-bg-color-overlay: #22222b;
+
+  --el-text-color-primary: #e5e5e7;
+  --el-text-color-regular: #c8c8cc;
+  --el-text-color-secondary: #a1a1a6;
+  --el-text-color-placeholder: #76767a;
+
+  --el-border-color: #333338;
+  --el-border-color-light: #44444a;
+
+  /* 高亮色：清新浅蓝色系（适配暗黑主题，层级清晰，不刺眼） */
+  --el-color-primary: #3b82f6; /* 主色-天蓝色（核心展示色，菜单激活色同步此色） */
+  --el-color-primary-light-3: #60a5fa; /* 浅3度-淡天蓝色（hover/轻高亮，如菜单hover） */
+  --el-color-primary-light-5: #93c5fd; /* 浅5度-极浅蓝（次要高亮/提示，如输入框聚焦边框） */
+  --el-color-primary-light-7: #bfdbfe; /* 浅7度-淡蓝灰（边框/辅助元素，如分割线） */
+  --el-color-primary-dark-2: #2563eb; /* 深2度-暗天蓝（选中/按压状态，如按钮点击） */
+  
+  /* 配置 el-menu-active-color 同步主色（浅蓝色），保证菜单激活状态视觉统一 */
+  --el-menu-active-color: var(--el-color-primary);
+}
