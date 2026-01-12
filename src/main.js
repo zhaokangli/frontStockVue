@@ -1,7 +1,8 @@
 import "./assets/main.css";
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css';
-import 'vant/lib/index.css';
+// if you just want to import css
+import 'element-plus/theme-chalk/dark/css-vars.css'
 
 import { createApp } from "vue";
 import { createPinia } from "pinia";

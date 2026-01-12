@@ -1,5 +1,5 @@
 <template>
-    <div class="homeBox">
+    <div class="dark homeBox">
         首页导航栏
     </div>
 </template>

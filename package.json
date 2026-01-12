@@ -14,8 +14,6 @@
     "axios": "^1.8.2",
     "element-plus": "^2.9.5",
     "pinia": "^2.1.4",
-    "qrcode.vue": "^3.6.0",
-    "vant": "^4.9.18",
     "vue": "^3.3.4",
     "vue-clipboard3": "^2.0.0",
     "vue-router": "^4.2.4"
