@@ -5,34 +5,38 @@
         <div class="headerBox">
           <div class="headerLeft">
             <div class="logo" @click="backHome"><h1>选股</h1></div>
+            <!-- 循环渲染菜单 -->
             <el-menu
-              :default-active="activeIndex2"
+              :default-active="activeIndex"
               :ellipsis="false"
               class="el-menu-demo"
               mode="horizontal"
-              @select="handleSelect"
+              @select="handleMenuSelect"
             >
-              <el-menu-item index="1">
-                <el-icon><Coin /></el-icon>
-                <span>首页</span>
-              </el-menu-item>
-              <el-sub-menu index="2">
-                <template #title>二级</template>
-                <el-menu-item index="2-1">item one</el-menu-item>
-                <el-menu-item index="2-2">item two</el-menu-item>
-              </el-sub-menu>
-              <el-menu-item index="3">
-                <el-icon><TrendCharts /></el-icon>
-                <span>k线展示图</span>
-              </el-menu-item>
-              <el-menu-item index="4">
-                <el-icon><Document /></el-icon>
-                <span>记录</span>
-              </el-menu-item>
-              <el-menu-item index="5">
-                <el-icon><User /></el-icon>
-                <span>我的</span>
-              </el-menu-item>
+              <!-- 一级菜单 -->
+              <template v-for="menu in menuList" :key="menu.index">
+                <!-- 有二级菜单的情况 -->
+                <el-sub-menu v-if="menu.children && menu.children.length" :index="menu.index">
+                  <template #title>
+                    <el-icon v-if="menu.icon"><component :is="menu.icon" /></el-icon>
+                    <span>{{ menu.label }}</span>
+                  </template>
+                  <!-- 二级菜单 -->
+                  <el-menu-item
+                    v-for="subMenu in menu.children"
+                    :key="subMenu.index"
+                    :index="subMenu.index"
+                  >
+                    {{ subMenu.label }}
+                  </el-menu-item>
+                </el-sub-menu>
+
+                <!-- 无二级菜单的一级菜单 -->
+                <el-menu-item v-else :index="menu.index">
+                  <el-icon v-if="menu.icon"><component :is="menu.icon" /></el-icon>
+                  <span>{{ menu.label }}</span>
+                </el-menu-item>
+              </template>
             </el-menu>
           </div>
           <div
@@ -51,6 +55,7 @@
           </div>
         </div>
       </el-header>
+      <!-- 子路由出口 -->
       <el-main>
         <router-view></router-view>
       </el-main>
@@ -59,48 +64,130 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
+import { useRouter, useRoute } from "vue-router";
+// 引入需要的图标
 import { TrendCharts, Coin, User, Document } from "@element-plus/icons-vue";
-import { useRouter, useRoute } from "vue-router"; // 引入路由钩子
 
-// 获取路由实例和当前路由
+// 路由实例
 const router = useRouter();
 const route = useRoute();
 
+// 定义导航菜单数据结构（核心）
+const menuList = [
+  {
+    index: "1", // 唯一标识
+    label: "首页", // 菜单名称
+    icon: Coin, // 图标组件
+    path: "/", // 跳转路径
+  },
+  {
+    index: "2",
+    label: "二级",
+    icon: "", // 二级菜单父项可无图标
+        children: [
+      {
+        index: "2-1",
+        label: "one",
+        path: "/one", // 对应二级菜单页面路由（必须与router配置一致）
+      },
+      {
+        index: "2-2",
+        label: "two",
+        path: "/two", // 对应二级菜单页面路由（必须与router配置一致）
+      },
+    ],
+  },
+  {
+    index: "3",
+    label: "k线展示图",
+    icon: TrendCharts,
+    path: "/kLine",
+  },
+  {
+    index: "4",
+    label: "记录",
+    icon: Document,
+    path: "/record",
+  },
+  {
+    index: "5",
+    label: "我的",
+    icon: User,
+    path: "/mine",
+  },
+];
 
+// 响应式数据
 const logoutShow = ref(false);
-const activeIndex2 = ref("1");
-// 菜单点击事件：跳转对应子路由
-const handleSelect = (key) => {
-  activeIndex2.value = key; // 同步激活状态
-  switch (key) {
-    case "1":
-      router.push({ path: "/" }); // 跳转到首页子路由
-      break;
-    case "3":
-      router.push({ path: "/kLine" }); // 跳转到k线子路由
-      break;
-    case "4":
-      router.push({ path: "/record" }); // 跳转到记录子路由
-      break;
-    case "5":
-      router.push({ path: "/mine" }); // 跳转到我的子路由
-      break;
-    default:
-      break;
+// 当前激活的菜单（默认匹配首页）
+const activeIndex = ref("1");
+
+// 同步菜单激活状态（兼容二级菜单）
+onMounted(() => {
+  syncActiveMenu();
+});
+router.afterEach(() => {
+  syncActiveMenu();
+});
+
+// 根据路由路径查找对应菜单（兼容一级/二级）
+const findMenuByPath = (path) => {
+  for (const menu of menuList) {
+    // 匹配一级菜单
+    if (menu.path === path) {
+      return menu;
+    }
+    // 匹配二级菜单（核心：遍历children）
+    if (menu.children && menu.children.length) {
+      const subMatch = menu.children.find((subMenu) => subMenu.path === path);
+      if (subMatch) {
+        return subMatch;
+      }
+    }
+  }
+  // 默认返回首页
+  return menuList[0];
+};
+
+// 同步激活状态
+const syncActiveMenu = () => {
+  const currentPath = route.path;
+  const matchMenu = findMenuByPath(currentPath);
+  if (matchMenu) {
+    activeIndex.value = matchMenu.index;
   }
 };
-// 定义返回首页方法
-const backHome = () => {
-  // 跳转到首页路由（请根据实际路由配置修改路径，如首页路由path为"/"或"/home"）
-  router.push({
-    path: "/", 
-  });
-  // 同步更新菜单激活状态
-  activeIndex2.value = "1";
+
+// 菜单点击事件（兼容一级/二级，自动匹配path跳转）
+const handleMenuSelect = (key) => {
+  const clickMenu = findMenuByIndex(key);
+  if (clickMenu && clickMenu.path) {
+    router.push({ path: clickMenu.path });
+    activeIndex.value = key;
+  }
 };
 
-onMounted(() => {});
+// 根据index查找菜单（兼容一级/二级）
+const findMenuByIndex = (index) => {
+  // 先查一级菜单
+  let targetMenu = menuList.find((menu) => menu.index === index);
+  if (targetMenu) return targetMenu;
+  // 再查二级菜单
+  for (const menu of menuList) {
+    if (menu.children && menu.children.length) {
+      targetMenu = menu.children.find((subMenu) => subMenu.index === index);
+      if (targetMenu) return targetMenu;
+    }
+  }
+  return null;
+};
+
+// 返回首页方法
+const backHome = () => {
+  router.push({ path: "/" });
+  activeIndex.value = "1";
+};
 </script>
 
 <style scoped lang="less">
@@ -147,14 +234,14 @@ onMounted(() => {});
       justify-content: center;
       cursor: pointer;
       border: none !important;
-      position: relative; /* 作为下拉菜单的定位容器 */
-      width: fit-content; /* 宽度贴合图标，避免居中偏移 */
+      position: relative;
+      width: fit-content;
       transition: background-color 0.2s;
 
       .loginIcon {
         width: 30px;
         height: 30px;
-        display: block; /* 消除图片默认间距 */
+        display: block;
       }
 
       .dropdownMenu {
@@ -163,9 +250,8 @@ onMounted(() => {});
         color: #fff;
         position: absolute;
         top: 65px;
-        /* 1. 核心修改：取消固定 right，用 transform 实现水平居中 */
-        left: 50%; /* 先让菜单左边缘对齐容器中心 */
-        transform: translateX(-50%); /* 再向左偏移自身50%宽度，实现整体居中 */
+        left: 50%;
+        transform: translateX(-50%);
         width: 100px;
         border-radius: 8px;
         box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.5);
@@ -173,13 +259,12 @@ onMounted(() => {});
         padding: 15px;
         text-align: center;
 
-        /* 2. 小三角：同步居中（与菜单对齐） */
         &::before {
           content: "";
           position: absolute;
           top: -10px;
-          left: 50%; /* 三角左边缘对齐菜单中心 */
-          transform: translateX(-50%); /* 三角向左偏移自身50%，实现居中 */
+          left: 50%;
+          transform: translateX(-50%);
           border-width: 0 10px 10px 10px;
           border-style: solid;
           border-color: transparent transparent #444 transparent;
@@ -189,7 +274,7 @@ onMounted(() => {});
           content: "";
           position: absolute;
           top: -9px;
-          left: 50%; /* 与 before 保持一致，同步居中 */
+          left: 50%;
           transform: translateX(-50%);
           border-width: 0 10px 10px 10px;
           border-style: solid;

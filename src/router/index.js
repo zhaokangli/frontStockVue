@@ -40,6 +40,17 @@ const router = createRouter({
           name: "mine",
           component: () => import("../views/mine.vue"),
         },
+        // 二级菜单对应子路由（新增核心）
+        {
+          path: "one",
+          name: "one",
+          component: () => import("../views/one.vue"),
+        },
+        {
+          path: "two",
+          name: "two",
+          component: () => import("../views/two.vue"),
+        },
       ],
     },
   ],
