@@ -28,7 +28,7 @@ const router = createRouter({
         {
           path: "kLine", // 子路由路径：/kLine（无需加/）
           name: "kLine",
-          component: () => import("../views/kLine.vue"),
+          component: () => import("../views/klineEchartBox/KlineEchart.vue"),
         },
         {
           path: "record",
