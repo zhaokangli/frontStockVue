@@ -4,6 +4,7 @@
       <el-header style="padding: 0">
         <div class="headerBox">
           <div class="headerLeft">
+            <div class="logo" @click="backHome"><h1>选股</h1></div>
             <el-menu
               :default-active="activeIndex2"
               :ellipsis="false"
@@ -65,6 +66,15 @@ const activeIndex2 = ref("1");
 const handleSelect = (key, keyPath) => {
   console.log(key, keyPath);
 };
+// 定义返回首页方法
+const backHome = () => {
+  // 跳转到首页路由（请根据实际路由配置修改路径，如首页路由path为"/"或"/home"）
+  router.push({
+    path: "/", 
+  });
+  // 同步更新菜单激活状态
+  activeIndex2.value = "1";
+};
 
 onMounted(() => {});
 </script>
@@ -89,6 +99,23 @@ onMounted(() => {});
     padding: 0 100px;
     background-color: var(--el-menu-bg-color);
     border-bottom: 1px solid var(--el-menu-border-color);
+    .logo {
+      width: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      h1 {
+        font-size: 22px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        user-select: none;
+      }
+    }
+    .headerLeft {
+      display: flex;
+      flex-direction: row;
+    }
 
     .headerRight {
       display: flex;
