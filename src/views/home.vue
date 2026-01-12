@@ -34,8 +34,16 @@
               </el-menu-item>
             </el-menu>
           </div>
-          <div class="headerRight">
-            <img class="loginIcon" src="../assets/image/login.png" alt="登录图标" />
+          <div
+            class="headerRight"
+            @mouseenter="logoutShow = true"
+            @mouseleave="logoutShow = false"
+          >
+            <img
+              class="loginIcon"
+              src="../assets/image/login.png"
+              alt="登录图标"
+            />
             <div v-if="logoutShow" class="dropdownMenu">
               <span>退出登录</span>
             </div>
@@ -51,7 +59,7 @@
 import { ref, onMounted } from "vue";
 import { TrendCharts, Coin, User, Document } from "@element-plus/icons-vue";
 
-const logoutShow = ref(true);
+const logoutShow = ref(false);
 const activeIndex2 = ref("1");
 
 const handleSelect = (key, keyPath) => {
@@ -113,7 +121,7 @@ onMounted(() => {});
         z-index: 999;
         padding: 15px;
         text-align: center;
-        
+
         /* 2. 小三角：同步居中（与菜单对齐） */
         &::before {
           content: "";
@@ -125,7 +133,7 @@ onMounted(() => {});
           border-style: solid;
           border-color: transparent transparent #444 transparent;
         }
-        
+
         &::after {
           content: "";
           position: absolute;
