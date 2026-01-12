@@ -51,7 +51,9 @@
           </div>
         </div>
       </el-header>
-      <el-main>主体</el-main>
+      <el-main>
+        <router-view></router-view>
+      </el-main>
     </el-container>
   </div>
 </template>
@@ -59,12 +61,34 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { TrendCharts, Coin, User, Document } from "@element-plus/icons-vue";
+import { useRouter, useRoute } from "vue-router"; // 引入路由钩子
+
+// 获取路由实例和当前路由
+const router = useRouter();
+const route = useRoute();
+
 
 const logoutShow = ref(false);
 const activeIndex2 = ref("1");
-
-const handleSelect = (key, keyPath) => {
-  console.log(key, keyPath);
+// 菜单点击事件：跳转对应子路由
+const handleSelect = (key) => {
+  activeIndex2.value = key; // 同步激活状态
+  switch (key) {
+    case "1":
+      router.push({ path: "/" }); // 跳转到首页子路由
+      break;
+    case "3":
+      router.push({ path: "/kLine" }); // 跳转到k线子路由
+      break;
+    case "4":
+      router.push({ path: "/record" }); // 跳转到记录子路由
+      break;
+    case "5":
+      router.push({ path: "/mine" }); // 跳转到我的子路由
+      break;
+    default:
+      break;
+  }
 };
 // 定义返回首页方法
 const backHome = () => {
